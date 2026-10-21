@@ -2,7 +2,7 @@
 
 import { h, fmtNum } from '../util.js';
 import { obterRaquete, salvarRaquete, estadoCorda, cordaH, definirAtiva, excluirRaquete } from '../dados.js';
-import { carregarCatalogo, marcas, agrupar, opcoesRaquete, resolverOpcao, camposDaPintura } from '../catalogo.js';
+import { carregarCatalogo, marcas, agrupar, opcoesRaquete, resolverOpcao, camposDaPintura, listaPinturas } from '../catalogo.js';
 import { desenharRaquete, ESTILOS, FORMATOS } from '../raquete-svg.js';
 import { resumoSetup } from '../resumo.js';
 import { ir, voltar, irParaInicio } from '../nav.js';
@@ -121,8 +121,36 @@ export async function formRaquete(id) {
     aoMudar: () => { hasteFixa = corHaste.valor; atualizarPrevia(); },
   });
 
-  for (const el of [padrao, cabeca]) el.addEventListener('input', atualizarPrevia);
+  const logotipo = interruptor('Marca e linha impressas', 'Escreve a marca no braço e a linha na lateral do aro', r.logotipo !== false, atualizarPrevia);
+
+  // Copiar só a pintura de um modelo do catálogo, sem mexer na ficha técnica.
+  const pinturas = listaPinturas(cat);
+  const copiarPintura = seletorMarcaModelo({
+    marcas: marcas(pinturas),
+    opcoesDaMarca: (m) => [['', pinturas.filter((p) => p.marca === m).map((p) => ({ valor: p.id, rotulo: p.rotulo }))]],
+    textoModelo: 'Escolha a pintura',
+    aoEscolher: (id) => {
+      const p = cat.pinturas[id];
+      if (p) aplicarPintura(camposDaPintura(p));
+    },
+  });
+
+  for (const el of [padrao, cabeca, marca, modelo]) el.addEventListener('input', atualizarPrevia);
   for (const el of [selEstilo, selFormato]) el.addEventListener('change', atualizarPrevia);
+
+  function aplicarPintura(v) {
+    selEstilo.value = v.estilo;
+    selFormato.value = v.formato;
+    listras.marcado = v.listras;
+    const nome = 'Cor do catálogo';
+    corPrincipal.definir(v.corPrincipal, nome, true);
+    corSecundaria.definir(v.corSecundaria, nome, true);
+    corDetalhe.definir(v.corDetalhe, nome, true);
+    corGrip.definir(v.corGrip, nome, true);
+    hasteFixa = v.corHaste;
+    corHaste.definir(v.corHaste || v.corPrincipal, nome, true);
+    atualizarPrevia();
+  }
 
   function aplicarCatalogo(res) {
     if (!res) return;
@@ -137,20 +165,8 @@ export async function formRaquete(id) {
     definirNumero(balanco, it.balanco);
     definirNumero(rigidez, it.rigidez);
     material.value = it.material ?? '';
-    if (pintura) {
-      const v = camposDaPintura(pintura);
-      selEstilo.value = v.estilo;
-      selFormato.value = v.formato;
-      listras.marcado = v.listras;
-      const nome = 'Cor do catálogo';
-      corPrincipal.definir(v.corPrincipal, nome, true);
-      corSecundaria.definir(v.corSecundaria, nome, true);
-      corDetalhe.definir(v.corDetalhe, nome, true);
-      corGrip.definir(v.corGrip, nome, true);
-      hasteFixa = v.corHaste;
-      corHaste.definir(v.corHaste || v.corPrincipal, nome, true);
-    }
-    atualizarPrevia();
+    if (pintura) aplicarPintura(camposDaPintura(pintura));
+    else atualizarPrevia();
   }
 
   function coletar() {
@@ -172,6 +188,7 @@ export async function formRaquete(id) {
       estilo: selEstilo.value,
       formato: selFormato.value,
       listras: listras.marcado,
+      logotipo: logotipo.marcado,
       corPrincipal: corPrincipal.valor,
       corSecundaria: corSecundaria.valor,
       corDetalhe: corDetalhe.valor,
@@ -232,8 +249,12 @@ export async function formRaquete(id) {
       campo('Material e tecnologias', material)),
     h('section', { class: 'secao-form' },
       h('h2', null, 'Ilustração'),
+      h('div', { class: 'subtitulo-form' }, 'Copiar pintura de um modelo'),
+      copiarPintura.el,
+      h('p', { class: 'dica' }, 'Aplica só as cores e o desenho; a ficha técnica não muda.'),
       h('div', { class: 'grade-2' }, campo('Pintura', selEstilo), campo('Formato da cabeça', selFormato)),
       listras.el,
+      logotipo.el,
       campo('Cor principal', corPrincipal.el),
       campo('Cor secundária', corSecundaria.el),
       campo('Grip', corGrip.el),

@@ -54,7 +54,10 @@ Cada item de `raquetes` tem `id`, `marca`, `linha`, `modelo`, `peso` (g, sem cor
 - `estilo`: `solido`, `lados`, `painel`, `lateral`, `topo`, `base` ou `degrade`;
 - `formato`: `oval`, `isometrica` (Yonex) ou `quadrada`;
 - `listras`: `true` para as faixas tipo zebra (Volkl);
-- cores em `#rrggbb`: `principal`, `secundaria`, `detalhe`, `grip` e `haste` (opcional).
+- cores em `#rrggbb`: `principal`, `secundaria`, `detalhe`, `grip` e `haste` (opcional);
+- `rotulo` (opcional): nome da pintura na lista "Copiar pintura de um modelo".
+
+Uma pintura não precisa estar ligada a uma raquete do catálogo: a "Speed YouTek IG (2011)" existe só para ser copiada para uma raquete antiga.
 
 ### Cordas (`catalogo/cordas.json`)
 

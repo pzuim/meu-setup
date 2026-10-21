@@ -2,7 +2,7 @@
 // Ao alterar código, CSS ou ícones, aumente VERSAO para os aparelhos baixarem a nova versão.
 // O catálogo (catalogo/*.json) se atualiza sozinho: usa a cópia guardada e busca a nova em segundo plano.
 
-const VERSAO = 'v2';
+const VERSAO = 'v3';
 const CACHE = `meu-setup-${VERSAO}`;
 
 const ARQUIVOS = [

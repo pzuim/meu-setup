@@ -36,11 +36,15 @@ export async function telaInicio() {
     secoes.push(h('section', { class: 'vitrine-item', 'aria-label': nomeRaquete(r) }, figura));
   }
 
+  // Depois da última raquete, um espaço discreto para cadastrar outra.
+  secoes.push(secaoNovaRaquete());
+
   secoes.forEach((sec, i) => {
     const proxima = secoes[i + 1];
     if (proxima) {
       sec.append(h('button', {
-        class: 'vitrine-seguinte', type: 'button', 'aria-label': 'Próxima raquete',
+        class: 'vitrine-seguinte', type: 'button',
+        'aria-label': i === secoes.length - 2 ? 'Adicionar outra raquete' : 'Próxima raquete',
         onclick: () => proxima.scrollIntoView({ behavior: 'smooth' }),
       }, icone('baixo')));
     }
@@ -82,9 +86,18 @@ function ligarZonas(figura, id) {
   for (const t of ['pointerup', 'pointercancel', 'pointerleave']) figura.addEventListener(t, limpar);
 }
 
+function secaoNovaRaquete() {
+  const fantasma = h('div', { class: 'vitrine-raquete fantasma' });
+  fantasma.innerHTML = desenharRaquete({ corPrincipal: '#8a8a8a', corSecundaria: '#8a8a8a', corGrip: '#8a8a8a', logotipo: false });
+  return h('section', { class: 'vitrine-item vitrine-nova', 'aria-label': 'Adicionar raquete' },
+    fantasma,
+    h('div', { class: 'vitrine-vazia' },
+      h('button', { class: 'btn btn-sec', type: 'button', onclick: () => ir('/raquete/nova') }, icone('mais'), 'Adicionar raquete')));
+}
+
 function vitrineVazia() {
   const fantasma = h('div', { class: 'vitrine-raquete fantasma' });
-  fantasma.innerHTML = desenharRaquete({ corPrincipal: '#8a8a8a', corSecundaria: '#5a5a5a', corGrip: '#5a5a5a' });
+  fantasma.innerHTML = desenharRaquete({ corPrincipal: '#8a8a8a', corSecundaria: '#8a8a8a', corGrip: '#8a8a8a', logotipo: false });
   return h('div', { class: 'vitrine' },
     h('section', { class: 'vitrine-item' },
       fantasma,

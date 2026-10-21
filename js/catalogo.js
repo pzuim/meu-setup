@@ -55,6 +55,21 @@ export function resolverOpcao(cat, valor) {
   return { item, pinturaId, pintura: cat.pinturas[pinturaId] || null };
 }
 
+// Pinturas agrupadas por marca, com um rótulo legível ("Speed · Black & White").
+const MARCA_DO_PREFIXO = { head: 'Head', wilson: 'Wilson', babolat: 'Babolat', yonex: 'Yonex', volkl: 'Volkl' };
+
+export function listaPinturas(cat) {
+  return Object.entries(cat.pinturas).map(([id, p]) => {
+    const usada = cat.raquetes.find((r) => (Array.isArray(r.pintura) ? r.pintura.includes(id) : r.pintura === id));
+    return {
+      id,
+      pintura: p,
+      marca: p.marca || usada?.marca || MARCA_DO_PREFIXO[id.split('-')[0]] || 'Outras',
+      rotulo: p.rotulo || (usada ? `${usada.linha || usada.modelo} · ${p.nome}` : p.nome),
+    };
+  });
+}
+
 // Converte uma pintura do catálogo nos campos visuais da raquete.
 export function camposDaPintura(p) {
   if (!p) return {};

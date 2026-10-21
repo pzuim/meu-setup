@@ -9,7 +9,7 @@ import { ir, recarregar } from '../nav.js';
 import { icone, aviso, confirmar, temaAtual, aplicarTema } from '../ui.js';
 import { segmentado } from '../campos.js';
 
-const VERSAO_APP = '1.1.0';
+const VERSAO_APP = '1.2.0';
 
 const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
 

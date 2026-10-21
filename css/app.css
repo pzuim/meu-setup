@@ -201,8 +201,15 @@ h1, h2, h3 { text-wrap: balance; }
 .r-leito-vazio { fill: var(--leito-vazio); }
 .r-estourada { opacity: 0.72; }
 
+.r-logo {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  pointer-events: none;
+  user-select: none;
+}
+
 .zona {
   fill: transparent;
+  stroke: transparent;
   cursor: pointer;
   outline: none;
   -webkit-tap-highlight-color: transparent;
